@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/fame361/Magicmark/compare/v1.2.0...v1.3.0) (2025-10-28)
+
+
+### Features
+
+* Complete production release with screenshots ([005cbea](https://github.com/fame361/Magicmark/commit/005cbea5f6080594287d858ae6708852ee921903))
+
 # [1.2.0](https://github.com/fame361/Magicmark/compare/v1.1.0...v1.2.0) (2025-10-28)
 
 
