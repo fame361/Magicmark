@@ -34,7 +34,8 @@
     "strapi-server.js",
     "README.md",
     "LICENSE",
-    "COPYRIGHT_NOTICE.txt"
+    "COPYRIGHT_NOTICE.txt",
+    "pics/"
   ],
   "scripts": {
     "build": "strapi-plugin build",

@@ -147,20 +147,25 @@ On first use, a modal will appear:
 
 ## 📸 Screenshots
 
-### Bookmark Management
-Professional interface for managing query bookmarks.
+### MagicMark Dashboard
+Professional interface for managing query bookmarks with statistics and easy access.
 
 ![MagicMark Dashboard](pics/dashboard.png)
 
-### Save Bookmark Modal
-Create bookmarks with emoji, name, and sharing options.
+### Save as MagicMark
+Create bookmarks with emoji, name, description, and sharing options directly from Content Manager.
 
-![Create Bookmark](pics/create-bookmark.png)
+![Save Bookmark](pics/saveAsMagicMark.png)
 
-### Content Manager Integration
-Seamless integration in Content Manager toolbar.
+### Advanced Filter Builder
+Build complex queries with the advanced filter modal for precise content filtering.
 
-![Content Manager](pics/content-manager.png)
+![Advanced Filters](pics/advancedFilters.png)
+
+### Quick Access in Content Manager
+Seamless integration - MagicMark button right in the Content Manager toolbar for instant bookmark access.
+
+![Quick Access](pics/quickaccesinContentmanager.png)
 
 ---
 
