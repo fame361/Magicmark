@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/fame361/Magicmark/compare/v1.0.0...v1.1.0) (2025-10-28)
+
+
+### Features
+
+* Ready for NPM - Complete Strapi v5 plugin ([75ae6c5](https://github.com/fame361/Magicmark/commit/75ae6c5d1620a704d59ea1531648630e4b0cf6a9))
+
 # 1.0.0 (2025-10-28)
 
 
