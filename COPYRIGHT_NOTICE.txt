@@ -1,0 +1,20 @@
+/**
+ * MagicMark - Advanced Query Builder for Strapi
+ * 
+ * Copyright (c) 2025 Schero A. (begservice)
+ * 
+ * Licensed under the MIT License
+ * 
+ * This plugin is free to use for personal and commercial projects.
+ * 
+ * IMPORTANT RESTRICTION:
+ * The license validation system (license-guard.ts and related components)
+ * must remain intact and functional. Removing or bypassing this system
+ * is strictly prohibited.
+ * 
+ * See LICENSE file for full terms.
+ * 
+ * Repository: https://github.com/begservice/strapi-plugin-magic-mark
+ * Issues: https://github.com/begservice/strapi-plugin-magic-mark/issues
+ */
+
