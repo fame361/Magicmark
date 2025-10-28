@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/fame361/Magicmark/compare/v1.1.0...v1.2.0) (2025-10-28)
+
+
+### Features
+
+* Production ready with corrected NPM token ([b702a04](https://github.com/fame361/Magicmark/commit/b702a04e96e635ba1dcad31e77dc0e01073c18d1))
+
 # [1.1.0](https://github.com/fame361/Magicmark/compare/v1.0.0...v1.1.0) (2025-10-28)
 
 
