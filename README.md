@@ -370,3 +370,4 @@ Special thanks to:
 ---
 
 **Made with 🔖 by fame361**
+# MagicMark - v1.2.0 ready
