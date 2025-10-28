@@ -97,7 +97,7 @@
   "description": "Advanced Query Builder and Bookmark Manager for Strapi v5 - Save complex Content Manager filters with one click",
   "license": "MIT",
   "private": false,
-  "author": "Schero A. <schero1894@gmail.com>",
+  "author": "Schero D.",
   "repository": {
     "type": "git",
     "url": "https://github.com/fame361/Magicmark.git"

@@ -329,7 +329,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and updates.
 
 ## 👨‍💻 Author
 
-**Schero A.**
+**Schero D.**
 - GitHub: [@fame361](https://github.com/fame361)
 
 ---
@@ -349,7 +349,7 @@ If you find this plugin useful:
 
 MIT License - see [LICENSE](./LICENSE) file for details
 
-**Copyright (c) 2025 Schero A. (begservice)**
+**Copyright (c) 2025 Schero D.**
 
 ---
 
