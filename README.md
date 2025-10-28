@@ -331,7 +331,6 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and updates.
 
 **Schero A.**
 - GitHub: [@fame361](https://github.com/fame361)
-- Email: schero1894@gmail.com
 
 ---
 
