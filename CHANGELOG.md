@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/fame361/Magicmark/compare/v1.3.0...v1.3.1) (2025-10-28)
+
+
+### Bug Fixes
+
+* Correct author name to Schero D. ([aa41c5a](https://github.com/fame361/Magicmark/commit/aa41c5a0e77f2a4d3218a8b15e169683393d0522))
+
 # [1.3.0](https://github.com/fame361/Magicmark/compare/v1.2.0...v1.3.0) (2025-10-28)
 
 
