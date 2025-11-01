@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/Schero94/Magicmark/compare/v1.3.1...v2.0.0) (2025-11-01)
+
+
+### Features
+
+* Migrate repository to Schero94/Magicmark ([e98e473](https://github.com/Schero94/Magicmark/commit/e98e47382c670c98b86b288650321e5c237a5cba))
+
+
+### BREAKING CHANGES
+
+* Repository location has changed to github.com/Schero94/Magicmark
+
 ## [1.3.1](https://github.com/fame361/Magicmark/compare/v1.3.0...v1.3.1) (2025-10-28)
 
 
