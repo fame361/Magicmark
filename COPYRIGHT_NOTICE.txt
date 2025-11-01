@@ -14,7 +14,7 @@
  * 
  * See LICENSE file for full terms.
  * 
- * Repository: https://github.com/fame361/Magicmark
- * Issues: https://github.com/fame361/Magicmark/issues
+ * Repository: https://github.com/Schero94/Magicmark
+ * Issues: https://github.com/Schero94/Magicmark/issues
  */
 

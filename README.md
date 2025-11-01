@@ -300,7 +300,7 @@ Contributions are welcome! Please:
 
 Found a bug? Please report it:
 
-**GitHub Issues:** https://github.com/fame361/Magicmark/issues
+**GitHub Issues:** https://github.com/Schero94/Magicmark/issues
 
 Include:
 - Strapi version
@@ -330,7 +330,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and updates.
 ## 👨‍💻 Author
 
 **Schero D.**
-- GitHub: [@fame361](https://github.com/fame361)
+- GitHub: [@Schero94](https://github.com/Schero94)
 
 ---
 
@@ -356,8 +356,8 @@ MIT License - see [LICENSE](./LICENSE) file for details
 ## 🔗 Links
 
 - **NPM Package:** https://www.npmjs.com/package/strapi-plugin-magic-mark
-- **GitHub Repository:** https://github.com/fame361/Magicmark
-- **Issues:** https://github.com/fame361/Magicmark/issues
+- **GitHub Repository:** https://github.com/Schero94/Magicmark
+- **Issues:** https://github.com/Schero94/Magicmark/issues
 - **Strapi Market:** Coming soon
 
 ---
