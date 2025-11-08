@@ -8,20 +8,42 @@
 
 ---
 
+## 📸 Screenshots
+
+### MagicMark Dashboard
+Professional interface for managing query bookmarks with statistics and easy access.
+
+![MagicMark Dashboard](pics/dashboard.png)
+
+### Save as MagicMark
+Create bookmarks with emoji, name, description, and sharing options directly from Content Manager.
+
+![Save Bookmark](pics/saveAsMagicMark.png)
+
+### Advanced Filter Builder
+Build complex queries with the advanced filter modal for precise content filtering.
+
+![Advanced Filters](pics/advancedFilters.png)
+
+### Quick Access in Content Manager
+Seamless integration - MagicMark button right in the Content Manager toolbar for instant bookmark access.
+
+![Quick Access](pics/quickaccesinContentmanager.png)
+
+---
+
 ## 📋 Table of Contents
 
 - [Features](#features)
 - [Quick Start](#quick-start)
 - [How It Works](#how-it-works)
-- [Core Concepts](#core-concepts)
+- [Screenshots in Action](#screenshots-in-action)
 - [API Routes](#api-routes)
 - [Configuration](#configuration)
-- [Admin Dashboard](#admin-dashboard)
 - [Use Cases](#use-cases)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
 - [Development](#development)
-- [NPM Release Process](#npm-release-process)
 
 ---
 
@@ -99,7 +121,7 @@ npm run develop
 
 1. Navigate to any Content Manager collection
 2. Apply filters, sorting, or search
-3. Click the **MagicMark** button in the toolbar
+3. Click the **MagicMark** button in the toolbar (see screenshot above)
 4. Click **"Save Bookmark"**
 5. Add:
    - Name (e.g., "Published Articles")
@@ -125,9 +147,9 @@ User in Content Manager
        ↓
 Applies: Filters, Sort, Search, Pagination
        ↓
-[Click MagicMark Button]
+[Click MagicMark Button] (See "Quick Access" screenshot)
        ↓
-"Save Bookmark" Modal opens
+"Save Bookmark" Modal opens (See "Save as MagicMark" screenshot)
        ↓
 User enters: Name, Emoji, Description, Sharing
        ↓
@@ -140,7 +162,7 @@ Query parameters captured:
        ↓
 Bookmark stored in database
        ↓
-Success! Bookmark appears in list
+Success! Bookmark appears in Dashboard (See "Dashboard" screenshot)
 ```
 
 ### Bookmark Apply Flow
@@ -156,7 +178,7 @@ List of available bookmarks appears
 Navigation to content type happens
        ↓
 Query parameters applied:
-  - Filters restored
+  - Filters restored (See "Advanced Filters" screenshot)
   - Sort order set
   - Pagination reset
   - Search cleared
@@ -164,102 +186,40 @@ Query parameters applied:
 Content Manager displays filtered results
 ```
 
-### Sharing Logic
-
-```
-Bookmark created by: User A
-       ↓
-Sharing settings:
-  - Owner (User A): Full access ✓
-  - Role "Editor": Read access
-  - User B: Read access
-  - Public: Read access
-       ↓
-When User B views MagicMark list:
-  - Sees bookmarks shared with them
-  - Can apply but NOT edit
-  - Can create personal bookmarks
-```
-
 ---
 
-## 🔑 Core Concepts
+## 🎬 Screenshots in Action
 
-### Bookmark Object
+### 1. Dashboard View
+The main **MagicMark Dashboard** (see first screenshot above) shows:
+- All your bookmarks with emoji icons
+- Pinned bookmarks at the top
+- Quick actions: Edit, Delete, Share
+- Search and filter capabilities
+- Beautiful gradient design
 
-All bookmark data stored in `api::magic-mark.bookmark` content type:
+### 2. Quick Access Button
+The **Quick Access** button (see screenshot above) is integrated directly into:
+- Content Manager toolbar
+- Appears on all collection pages
+- One-click access to bookmarks
+- Context-aware (shows relevant bookmarks)
 
-```javascript
-{
-  id: 1,
-  name: "Published Articles",
-  emoji: "📰",
-  description: "Articles published in last 30 days",
-  
-  // Query State
-  path: "/content-manager/collection-types/api::article.article",
-  query: "filters[$and][0][publishedAt][$notNull]=true&sort[0]=createdAt:desc",
-  
-  // Metadata
-  createdBy: { id: 1, email: "user@example.com" },
-  createdAt: "2024-01-15T10:30:00Z",
-  updatedAt: "2024-01-15T10:35:00Z",
-  
-  // Organization
-  order: 1,
-  isPinned: true,
-  
-  // Sharing
-  isPublic: false,
-  sharedWithRoles: [1, 2, 3],     // Role IDs
-  sharedWithUsers: [2, 5, 8],     // User IDs
-}
-```
+### 3. Save Bookmark Modal
+The **Save Bookmark Modal** (see screenshot above) includes:
+- Name field with emoji picker
+- Description for notes
+- Sharing options (Roles, Users, Public)
+- Preview of current query
+- Visual feedback
 
-### Query State Captured
-
-When saving a bookmark, MagicMark captures:
-
-```javascript
-{
-  // Filters (all conditions)
-  filters: {
-    $and: [
-      { publishedAt: { $notNull: true } },
-      { status: { $eq: "published" } },
-      { createdAt: { $gte: "2024-01-01" } }
-    ]
-  },
-  
-  // Sorting (column + direction)
-  sort: [
-    { field: "createdAt", order: "desc" },
-    { field: "title", order: "asc" }
-  ],
-  
-  // Pagination (current page & size)
-  pagination: {
-    page: 1,
-    pageSize: 25
-  },
-  
-  // Search (if applicable)
-  search: "strapi",
-  
-  // Field visibility (if customized)
-  fields: ["id", "title", "status", "publishedAt"]
-}
-```
-
-### Permission Model
-
-| Action | Owner | Shared Users | Shared Roles | Public |
-|--------|-------|--------------|--------------|--------|
-| View | ✅ | ✅ | ✅ | ✅ |
-| Apply | ✅ | ✅ | ✅ | ✅ |
-| Edit | ✅ | ❌ | ❌ | ❌ |
-| Delete | ✅ | ❌ | ❌ | ❌ |
-| Share | ✅ | ❌ | ❌ | ❌ |
+### 4. Advanced Filters
+The **Advanced Filter Builder** (see screenshot above) lets you:
+- Build complex filter conditions
+- Combine AND/OR logic
+- Save multi-level queries
+- Preview filter results
+- Edit existing filters
 
 ---
 
@@ -288,9 +248,6 @@ Response:
         "isPinned": true,
         "isPublic": false,
         "createdAt": "2024-01-15T10:30:00Z"
-      },
-      "relationships": {
-        "createdBy": { "data": { "id": 1 } }
       }
     }
   ],
@@ -317,14 +274,6 @@ Request:
     "sharedWithUsers": [3]
   }
 }
-
-Response:
-{
-  "data": {
-    "id": 6,
-    "attributes": { /* bookmark data */ }
-  }
-}
 ```
 
 #### Update Bookmark
@@ -332,8 +281,6 @@ Response:
 ```bash
 PUT /api/magic-mark/bookmarks/:id
 Authorization: Bearer JWT_TOKEN
-
-# Only bookmark owner can update
 ```
 
 #### Delete Bookmark
@@ -341,8 +288,6 @@ Authorization: Bearer JWT_TOKEN
 ```bash
 DELETE /api/magic-mark/bookmarks/:id
 Authorization: Bearer JWT_TOKEN
-
-# Only bookmark owner can delete
 ```
 
 #### Reorder Bookmarks
@@ -355,21 +300,7 @@ Request:
 {
   "bookmarkIds": [3, 1, 5, 2, 4]
 }
-
-# Sets new order for user's bookmarks
 ```
-
----
-
-### Admin API Routes
-
-All require **admin authentication**.
-
-| Method | Route | Purpose |
-|--------|-------|---------|
-| `GET` | `/api/magic-mark/admin/bookmarks` | Get all bookmarks (all users) |
-| `GET` | `/api/magic-mark/admin/stats` | Get bookmark statistics |
-| `GET` | `/api/magic-mark/admin/license/status` | Get license status |
 
 ---
 
@@ -395,13 +326,13 @@ export default () => ({
   'magic-mark': {
     enabled: true,
     config: {
-      // Future: Query history limit
-      maxHistoryItems: 100,
-      
-      // Future: Default bookmarks per user
+      // Maximum bookmarks per user
       maxBookmarksPerUser: 50,
       
-      // Future: Auto-cleanup old queries
+      // Enable query history
+      enableHistory: true,
+      
+      // Auto-cleanup old queries (days)
       autoCleanupDays: 90,
     },
   },
@@ -410,107 +341,116 @@ export default () => ({
 
 ---
 
-## 🎛️ Admin Dashboard
-
-Access at **Admin → MagicMark** (sidebar plugin)
-
-### Main Interface
-
-#### Bookmark List
-- **Pinned Bookmarks** - Appear at top (⭐ indicator)
-- **All Bookmarks** - Sorted by creation date
-- **Search** - Find bookmarks by name or description
-- **Drag to Reorder** - Change bookmark order
-
-#### Bookmark Card
-- Displays: Emoji, Name, Description
-- Click to apply bookmark
-- Right-click for options menu
-
-#### Options Menu
-- **Edit** - Update bookmark details
-- **Duplicate** - Create a copy
-- **Pin** - Pin to top
-- **Share** - Configure access
-- **Delete** - Remove bookmark
-
----
-
 ## 💡 Use Cases
 
 ### Content Management
 
-**Published Articles**
+**Published Articles** 📰
 ```
 Filter: publishedAt is not empty
 Sort: createdAt DESC
 Result: Quick access to all published content
 ```
 
-**Draft Posts**
+**Draft Posts** 📝
 ```
 Filter: publishedAt is empty AND status = "draft"
 Sort: updatedAt DESC
 Result: Focus on work in progress
 ```
 
-**Recent Updates**
+**Recent Updates** 🕒
 ```
 Filter: updatedAt >= 7 days ago
 Sort: updatedAt DESC
 Result: See what changed recently
 ```
 
+**My Content** 👤
+```
+Filter: createdBy = current user
+Sort: createdAt DESC
+Result: See all your creations
+```
+
 ### Team Collaboration
 
-- **Shared Queries** - Team members access same filtered views
-- **Role-Based Access** - Different bookmarks per admin role
-- **Public Bookmarks** - Common queries for entire team
+**Shared Queries** 👥
+- Team members access same filtered views
+- No need to re-apply complex filters
+- Everyone sees consistent data
+
+**Role-Based Access** 🔐
+- Editors see different bookmarks than Authors
+- Managers see different views than Contributors
+- Automatic based on admin roles
+
+**Public Bookmarks** 🌍
+- Common queries for entire team
+- New members immediately see them
+- Save time explaining filters
+
+### Power Users
+
+**Complex Filters** 🎯
+```
+Save multi-condition queries:
+  - Status = "approved"
+  - Category IN ["tech", "news"]
+  - Priority >= "high"
+  - CreatedAt >= "2024-01-01"
+```
+
+**Sorted Views** 📊
+```
+Different sort orders for different needs:
+  - By date (newest first)
+  - By title (A-Z)
+  - By popularity (most viewed)
+```
 
 ---
 
 ## 🧪 Testing
 
-### 1. Install & Setup Test Strapi
+### 1. Install & Setup
 
 ```bash
-# Create test Strapi instance
-npx create-strapi-app@latest test-app --quickstart
-
-cd test-app
-
-# Copy magic-mark plugin
-cp -r /path/to/magic-mark src/plugins/
+# Install in your Strapi project
+npm install strapi-plugin-magic-mark
 
 # Add to config/plugins.ts
-npm run develop
+# Rebuild admin
+npm run build
 ```
 
-### 2. Create Test Content Type
+### 2. Test Basic Bookmark
 
-1. Go to Settings → Content-Types Builder
-2. Create new Collection: "Post"
-3. Add fields: title, status, publishedAt
-4. Create & save
+1. Go to Content Manager → Any collection
+2. Apply some filters
+3. Click **MagicMark** button (see screenshot)
+4. Save with name "Test Bookmark" and emoji 🧪
+5. Verify it appears in dashboard
 
-### 3. Test Bookmark Save
+### 3. Test Bookmark Apply
 
-1. Go to Content Manager → Posts
-2. Click **MagicMark** → Save Bookmark
-3. Fill form and save
-4. Verify bookmark appears
+1. Clear all filters
+2. Click **MagicMark** → Select "Test Bookmark"
+3. Verify filters are restored correctly
 
-### 4. Test Bookmark Apply
+### 4. Test Sharing
 
-1. Click **MagicMark** → Select bookmark
-2. Verify filters are applied correctly
+1. Create bookmark
+2. Share with specific role
+3. Login as user with that role
+4. Verify bookmark is visible
 
-### 5. Test Sharing
+### 5. Test Advanced Filters
 
-1. Edit bookmark
-2. Share with role/user
-3. Login as that user
-4. Verify bookmark appears
+1. Use **Advanced Filter Builder** (see screenshot)
+2. Create complex multi-condition filter
+3. Save as bookmark
+4. Apply and verify all conditions work
 
 ---
 
@@ -518,35 +458,43 @@ npm run develop
 
 ### MagicMark Button Not Appearing
 
+**Problem:** No MagicMark button in Content Manager toolbar (see screenshot for where it should be).
+
 **Solutions:**
-1. Verify plugin is enabled in config
-2. Rebuild admin UI: `npm run build`
-3. Clear browser cache (Cmd+Shift+R / Ctrl+Shift+R)
+1. Rebuild admin: `npm run build`
+2. Clear browser cache (Cmd+Shift+R / Ctrl+Shift+R)
+3. Check plugin is enabled in config
 4. Check browser console for errors (F12)
 
 ### Bookmarks Not Saving
 
+**Problem:** Click "Save Bookmark" but bookmark doesn't appear in dashboard.
+
 **Solutions:**
 1. Check Strapi logs for errors
-2. Verify `api::magic-mark.bookmark` collection exists
-3. Check license is activated
-4. Verify database is writable
+2. Verify license is activated
+3. Check database is writable
+4. Try creating simpler bookmark first
 
 ### Bookmarks Not Applying
 
+**Problem:** Select bookmark but filters don't apply.
+
 **Solutions:**
 1. Refresh page and try again
-2. Check browser console for errors
+2. Check Content Manager path matches bookmark
 3. Try creating new bookmark
-4. Check browser localStorage
+4. Clear browser localStorage
 
-### License Validation Fails
+### Advanced Filters Not Working
+
+**Problem:** Complex filters from advanced builder don't apply correctly.
 
 **Solutions:**
-1. Check internet connection
-2. Try activating license again
-3. Use auto-create option
-4. Contact support if issue persists
+1. Check filter syntax in bookmark
+2. Try simpler filter first
+3. Verify content type supports the filters
+4. Check browser console for errors
 
 ---
 
@@ -576,9 +524,16 @@ magic-mark/
 ├── admin/                      # React admin UI
 │   └── src/
 │       ├── components/
+│       │   ├── BookmarkList.tsx
+│       │   ├── SaveBookmarkModal.tsx
+│       │   ├── BookmarkCard.tsx
+│       │   └── AdvancedFilterBuilder.tsx
 │       ├── pages/
+│       │   ├── App.tsx
+│       │   ├── HomePage.tsx (Dashboard - see screenshot)
+│       │   └── LicensePage.tsx
 │       ├── hooks/
-│       ├── translations/
+│       ├── translations/       # i18n (5 languages)
 │       └── index.ts
 ├── server/                     # Backend (TypeScript)
 │   └── src/
@@ -587,9 +542,14 @@ magic-mark/
 │       ├── services/
 │       ├── routes/
 │       └── content-types/
-├── .github/workflows/          # CI/CD pipelines
+├── pics/                       # Screenshots
+│   ├── dashboard.png
+│   ├── saveAsMagicMark.png
+│   ├── advancedFilters.png
+│   └── quickaccesinContentmanager.png
+├── .github/workflows/          # CI/CD
 ├── package.json
-├── .releaserc.json             # semantic-release config
+├── .releaserc.json
 └── README.md
 ```
 
@@ -599,11 +559,14 @@ magic-mark/
 # Build plugin
 npm run build
 
-# Package for NPM
+# Verify integrity
 npm run verify
 
 # Release (automatic via GitHub Actions)
-# Just use conventional commits: feat:, fix:, etc.
+# Just use semantic commits:
+git commit -m "feat: add new feature"    # → MINOR version
+git commit -m "fix: fix bug"             # → PATCH version
+git commit -m "feat!: breaking change"   # → MAJOR version
 ```
 
 ---
@@ -611,27 +574,6 @@ npm run verify
 ## 📦 NPM Release Process
 
 This plugin uses **semantic-release** for automated versioning.
-
-### Automatic Release Workflow
-
-```
-Developer commits with semantic messages (feat:, fix:)
-       ↓
-GitHub Actions triggered on push to main
-       ↓
-Analyzes commits:
-  - feat: → MINOR version
-  - fix: → PATCH version
-  - BREAKING CHANGE: → MAJOR version
-       ↓
-CHANGELOG updated
-       ↓
-Version bumped in package.json
-       ↓
-Published to NPM
-       ↓
-GitHub release created
-```
 
 ### Commit Message Format
 
@@ -646,10 +588,14 @@ git commit -m "feat: add bookmark export"
 git commit -m "feat!: change API format"
 ```
 
-### GitHub Actions Workflows
+### Automatic Release
 
-- **release.yml** - Automatic release to NPM
-- **test.yml** - Test & verify on PR
+GitHub Actions automatically:
+- Analyzes commits
+- Bumps version
+- Updates CHANGELOG
+- Publishes to NPM
+- Creates GitHub release
 
 ---
 
@@ -657,23 +603,11 @@ git commit -m "feat!: change API format"
 
 Contributions are welcome!
 
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing`
+1. Fork: https://github.com/Schero94/Magicmark
+2. Create branch: `git checkout -b feature/amazing`
 3. Commit: `git commit -m "feat: add amazing feature"`
 4. Push: `git push origin feature/amazing`
 5. Open Pull Request
-
----
-
-## 📝 Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
-
----
-
-## 🐛 Bug Reports & Feature Requests
-
-**GitHub Issues:** https://github.com/Schero94/Magicmark/issues
 
 ---
 
@@ -682,6 +616,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 - **NPM Package:** https://www.npmjs.com/package/strapi-plugin-magic-mark
 - **GitHub:** https://github.com/Schero94/Magicmark
 - **Issues:** https://github.com/Schero94/Magicmark/issues
+- **Changelog:** [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
@@ -691,15 +626,30 @@ See [CHANGELOG.md](./CHANGELOG.md) for detailed version history.
 
 **Copyright (c) 2025 Schero D.**
 
+See [LICENSE](./LICENSE) for full terms
+
 ---
 
-## 🌐 Languages
+## 🌐 Supported Languages
 
-- 🇬🇧 English
-- 🇩🇪 Deutsch
-- 🇫🇷 Français
-- 🇪🇸 Español
-- 🇵🇹 Português
+- 🇬🇧 **English** - Global standard
+- 🇩🇪 **Deutsch** - German (DACH region)
+- 🇫🇷 **Français** - French
+- 🇪🇸 **Español** - Spanish (Spain & Latin America)
+- 🇵🇹 **Português** - Portuguese (Brazil & Portugal)
+
+Language automatically follows your Strapi admin interface setting.
+
+---
+
+## 🙏 Acknowledgments
+
+Built with ❤️ for the Strapi community.
+
+Special thanks to:
+- Strapi team for the amazing CMS
+- Community contributors
+- All users providing feedback
 
 ---
 
