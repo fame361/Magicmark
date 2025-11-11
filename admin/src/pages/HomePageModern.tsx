@@ -31,6 +31,7 @@ import {
   Calendar,
   Clock,
   Search,
+  Book,
 } from '@strapi/icons';
 import { useFetchClient } from '@strapi/strapi/admin';
 import pluginId from '../pluginId';
@@ -643,7 +644,7 @@ const HomePageModern: React.FC = () => {
       <Header>
         <HeaderContent direction="column" alignItems="flex-start" gap={2}>
           <Title>
-            <Sparkle /> MagicMark
+            <Book /> MagicMark
           </Title>
           <Subtitle>
             Save filtered views and navigate with one click
