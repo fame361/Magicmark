@@ -14,7 +14,7 @@ export default async (policyContext: any, config: any, { strapi }: any) => {
 
     // If no license key exists, deny access
     if (!licenseKey) {
-      strapi.log.warn('⚠️ API access denied: No license key found');
+      strapi.log.warn('[WARN] API access denied: No license key found');
       return policyContext.unauthorized('No license found. Please activate the plugin first.');
     }
 
@@ -22,7 +22,7 @@ export default async (policyContext: any, config: any, { strapi }: any) => {
     const verification = await licenseGuard.verifyLicense(licenseKey);
     
     if (!verification.valid) {
-      strapi.log.warn('⚠️ API access denied: Invalid license');
+      strapi.log.warn('[WARN] API access denied: Invalid license');
       return policyContext.unauthorized('Invalid or expired license. Please check your license status.');
     }
 
@@ -30,17 +30,17 @@ export default async (policyContext: any, config: any, { strapi }: any) => {
     const license = await licenseGuard.getLicenseByKey(licenseKey);
     
     if (!license) {
-      strapi.log.warn('⚠️ API access denied: License not found in database');
+      strapi.log.warn('[WARN] API access denied: License not found in database');
       return policyContext.unauthorized('License not found. Please contact support.');
     }
 
     if (!license.isActive) {
-      strapi.log.warn('⚠️ API access denied: License is inactive');
+      strapi.log.warn('[WARN] API access denied: License is inactive');
       return policyContext.unauthorized('License is inactive. Please activate your license.');
     }
 
     if (license.isExpired) {
-      strapi.log.warn('⚠️ API access denied: License has expired');
+      strapi.log.warn('[WARN] API access denied: License has expired');
       return policyContext.unauthorized('License has expired. Please renew your license.');
     }
 

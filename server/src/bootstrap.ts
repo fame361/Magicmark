@@ -13,7 +13,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
       
       if (!licenseStatus.valid) {
         strapi.log.error('╔════════════════════════════════════════════════════════════════╗');
-        strapi.log.error('║  ❌ MAGICMARK PLUGIN - NO VALID LICENSE                        ║');
+        strapi.log.error('║  [ERROR] MAGICMARK PLUGIN - NO VALID LICENSE                  ║');
         strapi.log.error('║                                                                ║');
         strapi.log.error('║  This plugin requires a valid license to operate.             ║');
         strapi.log.error('║  Please activate your license via Admin UI:                   ║');
@@ -31,7 +31,7 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
         const storedKey = await pluginStore.get({ key: 'licenseKey' }) as string | undefined;
         
         strapi.log.info('╔════════════════════════════════════════════════════════════════╗');
-        strapi.log.info('║  ✅ MAGICMARK PLUGIN LICENSE ACTIVE                            ║');
+        strapi.log.info('║  [SUCCESS] MAGICMARK PLUGIN LICENSE ACTIVE                    ║');
         strapi.log.info('║                                                                ║');
         
         if (licenseStatus.data) {
@@ -44,12 +44,12 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
         }
         
         strapi.log.info('║                                                                ║');
-        strapi.log.info('║  🔄 Auto-pinging every 15 minutes                              ║');
+        strapi.log.info('║  [PING] Auto-pinging every 15 minutes                         ║');
         strapi.log.info('╚════════════════════════════════════════════════════════════════╝');
       }
     }, 3000); // Wait 3 seconds for API to be ready
   } catch (error) {
-    strapi.log.error('❌ Error initializing License Guard:', error);
+    strapi.log.error('[ERROR] Error initializing License Guard:', error);
   }
   
   strapi.log.info('[Magic-Mark] Plugin bootstrapped successfully');

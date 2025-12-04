@@ -1,38 +1,45 @@
 import type { Core } from '@strapi/strapi';
 
+const BOOKMARK_UID = 'plugin::magic-mark.bookmark';
+const ADMIN_USER_UID = 'admin::user';
+
+/**
+ * Bookmark Service
+ * Handles all bookmark-related database operations
+ * 
+ * Uses Document Service API (Strapi v5 Best Practice)
+ * 
+ * NOTE: We store creatorId/updaterId as strings (documentId) instead of relations
+ * to avoid permission issues with admin::user content-type.
+ */
 const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
-  async findAll(userId: number) {
+  /**
+   * Find all bookmarks accessible to a user
+   * @param userId - The admin user's documentId
+   * @returns Array of accessible bookmarks
+   */
+  async findAll(userId: string) {
     try {
-      // Get user with roles
-      const user = await strapi.entityService.findOne(
-        'admin::user',
-        userId,
-        {
-          populate: ['roles']
-        }
-      );
+      // Get user with roles using Document Service
+      const user = await strapi.documents(ADMIN_USER_UID).findOne({
+        documentId: userId,
+        populate: ['roles']
+      });
 
-      const userRoleIds = user?.roles?.map((role: any) => role.id) || [];
+      const userRoleIds = user?.roles?.map((role: any) => role.documentId || role.id) || [];
 
-      // Find bookmarks that:
-      // 1. User created (owns)
-      // 2. Are public
-      // 3. Are shared with user's roles
-      const allBookmarks = await strapi.entityService.findMany(
-        'plugin::magic-mark.bookmark',
-        {
-          sort: [
-            { isPinned: 'desc' },
-            { order: 'asc' }
-          ],
-          populate: ['createdBy']
-        }
-      );
+      // Find all bookmarks (no populate needed - creatorId is a string field)
+      const allBookmarks = await strapi.documents(BOOKMARK_UID).findMany({
+        sort: [
+          { isPinned: 'desc' },
+          { order: 'asc' }
+        ]
+      });
 
       // Filter bookmarks based on access
       const accessibleBookmarks = allBookmarks?.filter((bookmark: any) => {
-        // User owns this bookmark
-        if (bookmark.createdBy?.id === userId) {
+        // User owns this bookmark (compare creatorId field)
+        if (bookmark.creatorId === userId) {
           return true;
         }
         // Bookmark is public
@@ -47,7 +54,7 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
         }
         // Bookmark is shared with user's roles
         if (bookmark.sharedWithRoles && Array.isArray(bookmark.sharedWithRoles)) {
-          return bookmark.sharedWithRoles.some((roleId: number) => 
+          return bookmark.sharedWithRoles.some((roleId: string) => 
             userRoleIds.includes(roleId)
           );
         }
@@ -61,37 +68,55 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
-  async create(name: string, path: string, query: string, emoji: string, description: string, userId: number, sharedWithRoles?: number[], sharedWithUsers?: number[], isPublic?: boolean) {
+  /**
+   * Create a new bookmark
+   * @param name - Bookmark name
+   * @param path - URL path
+   * @param query - Query string
+   * @param emoji - Emoji icon
+   * @param description - Description
+   * @param userId - Creator's documentId
+   * @param sharedWithRoles - Array of role documentIds
+   * @param sharedWithUsers - Array of user documentIds
+   * @param isPublic - Public visibility
+   * @returns Created bookmark
+   */
+  async create(
+    name: string, 
+    path: string, 
+    query: string, 
+    emoji: string, 
+    description: string, 
+    userId: string, 
+    sharedWithRoles?: string[], 
+    sharedWithUsers?: string[], 
+    isPublic?: boolean
+  ) {
     try {
       // Get the highest order number
-      const bookmarks = await strapi.entityService.findMany(
-        'plugin::magic-mark.bookmark',
-        {
-          sort: [{ order: 'desc' }],
-          limit: 1
-        }
-      );
+      const bookmarks = await strapi.documents(BOOKMARK_UID).findMany({
+        sort: [{ order: 'desc' }],
+        limit: 1
+      });
       
-      const maxOrder = bookmarks && bookmarks.length > 0 ? bookmarks[0].order : 0;
+      const maxOrder = bookmarks && bookmarks.length > 0 ? (bookmarks[0] as any).order : 0;
       
-      const bookmark = await strapi.entityService.create(
-        'plugin::magic-mark.bookmark',
-        {
-          data: {
-            name,
-            path,
-            query: query || '',
-            emoji: emoji || '🔖',
-            description,
-            isPinned: false,
-            order: (maxOrder || 0) + 1,
-            createdBy: userId,
-            sharedWithRoles: sharedWithRoles || [],
-            sharedWithUsers: sharedWithUsers || [],
-            isPublic: isPublic || false
-          } as any
-        }
-      );
+      const bookmark = await strapi.documents(BOOKMARK_UID).create({
+        data: {
+          name,
+          path,
+          query: query || '',
+          emoji: emoji || 'bookmark',
+          description,
+          isPinned: false,
+          order: (maxOrder || 0) + 1,
+          creatorId: userId,  // Store as string field, not relation
+          updaterId: userId,
+          sharedWithRoles: sharedWithRoles || [],
+          sharedWithUsers: sharedWithUsers || [],
+          isPublic: isPublic || false
+        } as any
+      });
       return bookmark;
     } catch (error) {
       strapi.log.error('[magic-mark] Error creating bookmark:', error);
@@ -99,40 +124,41 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
-  async update(id: string | number, data: any, userId: number) {
+  /**
+   * Update an existing bookmark
+   * @param documentId - Bookmark's documentId
+   * @param data - Update data
+   * @param userId - Editor's documentId
+   * @returns Updated bookmark
+   */
+  async update(documentId: string, data: any, userId: string) {
     try {
       // First check if user owns this bookmark
-      const existingBookmark = await strapi.entityService.findOne(
-        'plugin::magic-mark.bookmark',
-        id,
-        {
-          populate: ['createdBy']
-        }
-      );
+      const existingBookmark = await strapi.documents(BOOKMARK_UID).findOne({
+        documentId
+      });
 
-      if (!existingBookmark || existingBookmark.createdBy?.id !== userId) {
+      // Check ownership via creatorId field
+      if (!existingBookmark || (existingBookmark as any).creatorId !== userId) {
         throw new Error('Unauthorized: You can only edit your own bookmarks');
       }
 
-      const bookmark = await strapi.entityService.update(
-        'plugin::magic-mark.bookmark',
-        id,
-        {
-          data: {
-            name: data.name,
-            path: data.path,
-            query: data.query || '',
-            emoji: data.emoji || '🔖',
-            description: data.description,
-            isPinned: data.isPinned,
-            order: data.order,
-            sharedWithRoles: data.sharedWithRoles,
-            sharedWithUsers: data.sharedWithUsers,
-            isPublic: data.isPublic,
-            updatedBy: userId
-          } as any
-        }
-      );
+      const bookmark = await strapi.documents(BOOKMARK_UID).update({
+        documentId,
+        data: {
+          name: data.name,
+          path: data.path,
+          query: data.query || '',
+          emoji: data.emoji || 'bookmark',
+          description: data.description,
+          isPinned: data.isPinned,
+          order: data.order,
+          sharedWithRoles: data.sharedWithRoles,
+          sharedWithUsers: data.sharedWithUsers,
+          isPublic: data.isPublic,
+          updaterId: userId  // Store as string field
+        } as any
+      });
       return bookmark;
     } catch (error) {
       strapi.log.error('[magic-mark] Error updating bookmark:', error);
@@ -140,31 +166,38 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
-
-  async delete(id: string | number) {
+  /**
+   * Delete a bookmark
+   * @param documentId - Bookmark's documentId
+   * @returns Deleted bookmark
+   */
+  async delete(documentId: string) {
     try {
-      return await strapi.entityService.delete(
-        'plugin::magic-mark.bookmark',
-        id
-      );
+      return await strapi.documents(BOOKMARK_UID).delete({
+        documentId
+      });
     } catch (error) {
       strapi.log.error('[magic-mark] Error deleting bookmark:', error);
       throw error;
     }
   },
 
-  async pin(id: string | number, isPinned: boolean, userId: number) {
+  /**
+   * Pin or unpin a bookmark
+   * @param documentId - Bookmark's documentId
+   * @param isPinned - Pin status
+   * @param userId - Editor's documentId
+   * @returns Updated bookmark
+   */
+  async pin(documentId: string, isPinned: boolean, userId: string) {
     try {
-      const bookmark = await strapi.entityService.update(
-        'plugin::magic-mark.bookmark',
-        id,
-        {
-          data: {
-            isPinned: isPinned,
-            updatedBy: userId
-          } as any
-        }
-      );
+      const bookmark = await strapi.documents(BOOKMARK_UID).update({
+        documentId,
+        data: {
+          isPinned: isPinned,
+          updaterId: userId
+        } as any
+      });
       return bookmark;
     } catch (error) {
       strapi.log.error('[magic-mark] Error pinning bookmark:', error);
@@ -172,19 +205,22 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
-  async reorder(bookmarkIds: (string | number)[], userId: number) {
+  /**
+   * Reorder bookmarks
+   * @param bookmarkIds - Array of bookmark documentIds in new order
+   * @param userId - Editor's documentId
+   * @returns Updated bookmarks
+   */
+  async reorder(bookmarkIds: string[], userId: string) {
     try {
-      const updates = bookmarkIds.map((id, index) =>
-        strapi.entityService.update(
-          'plugin::magic-mark.bookmark',
-          id,
-          {
-            data: {
-              order: index,
-              updatedBy: userId
-            } as any
-          }
-        )
+      const updates = bookmarkIds.map((documentId, index) =>
+        strapi.documents(BOOKMARK_UID).update({
+          documentId,
+          data: {
+            order: index,
+            updaterId: userId
+          } as any
+        })
       );
       return Promise.all(updates);
     } catch (error) {
@@ -193,6 +229,11 @@ const bookmarkService = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
+  /**
+   * Validate URL format
+   * @param url - URL to validate
+   * @returns True if valid
+   */
   validateUrl(url: string): boolean {
     try {
       new URL(url);

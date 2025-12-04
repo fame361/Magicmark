@@ -39,9 +39,9 @@ export default {
         },
         emoji: { 
           type: 'string', 
-          default: '🔖', 
+          default: 'bookmark', 
           configurable: false, 
-          maxLength: 2 
+          maxLength: 50 
         },
         isPinned: { 
           type: 'boolean', 
@@ -57,17 +57,30 @@ export default {
           type: 'text', 
           configurable: false 
         },
-        // Array of role IDs that have access to this bookmark
+        // Creator's documentId (stored as string, not relation)
+        // We store documentId instead of relation to avoid admin::user permission issues
+        creatorId: {
+          type: 'string',
+          configurable: false,
+          description: 'documentId of the admin user who created this bookmark'
+        },
+        // Last updater's documentId
+        updaterId: {
+          type: 'string',
+          configurable: false,
+          description: 'documentId of the admin user who last updated this bookmark'
+        },
+        // Array of role documentIds that have access to this bookmark
         sharedWithRoles: {
           type: 'json',
           configurable: false,
-          description: 'Array of role IDs that have access to this bookmark'
+          description: 'Array of role documentIds that have access to this bookmark'
         },
-        // Array of user IDs that have direct access to this bookmark
+        // Array of user documentIds that have direct access to this bookmark
         sharedWithUsers: {
           type: 'json',
           configurable: false,
-          description: 'Array of user IDs that have direct access to this bookmark'
+          description: 'Array of user documentIds that have direct access to this bookmark'
         },
         // Whether this bookmark is public to all admin users
         isPublic: {

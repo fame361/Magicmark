@@ -208,7 +208,7 @@ export default ({ strapi }: any) => ({
       const verification = await licenseGuard.verifyLicense(trimmedKey);
 
       if (!verification.valid) {
-        strapi.log.warn(`⚠️ Invalid license key attempted: ${trimmedKey.substring(0, 8)}...`);
+        strapi.log.warn(`[WARN] Invalid license key attempted: ${trimmedKey.substring(0, 8)}...`);
         return ctx.badRequest('Invalid or expired license key');
       }
 
@@ -216,13 +216,13 @@ export default ({ strapi }: any) => ({
       const license = await licenseGuard.getLicenseByKey(trimmedKey);
       
       if (!license) {
-        strapi.log.warn(`⚠️ License not found in database: ${trimmedKey.substring(0, 8)}...`);
+        strapi.log.warn(`[WARN] License not found in database: ${trimmedKey.substring(0, 8)}...`);
         return ctx.badRequest('License not found');
       }
 
       // Verify email matches
       if (license.email.toLowerCase() !== trimmedEmail) {
-        strapi.log.warn(`⚠️ Email mismatch for license key: ${trimmedKey.substring(0, 8)}... (Attempted: ${trimmedEmail})`);
+        strapi.log.warn(`[WARN] Email mismatch for license key: ${trimmedKey.substring(0, 8)}... (Attempted: ${trimmedEmail})`);
         return ctx.badRequest('Email address does not match this license key');
       }
 
@@ -239,7 +239,7 @@ export default ({ strapi }: any) => ({
         data: verification.data,
       };
 
-      strapi.log.info(`✅ Existing license key validated and stored: ${trimmedKey.substring(0, 8)}... (Email: ${trimmedEmail})`);
+      strapi.log.info(`[SUCCESS] Existing license key validated and stored: ${trimmedKey.substring(0, 8)}... (Email: ${trimmedEmail})`);
 
       return ctx.send({
         success: true,

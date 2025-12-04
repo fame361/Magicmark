@@ -1,4 +1,17 @@
+const ADMIN_ROLE_UID = 'admin::role';
+const ADMIN_USER_UID = 'admin::user';
+
+/**
+ * Bookmark Controller
+ * Handles HTTP requests for bookmark management
+ * 
+ * Uses Document Service API (Strapi v5 Best Practice)
+ */
 export default ({ strapi }: any) => ({
+  /**
+   * Get all bookmarks for current user
+   * GET /magic-mark/bookmarks
+   */
   async getAll(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -6,10 +19,13 @@ export default ({ strapi }: any) => ({
         return ctx.throw(401, 'User not authenticated');
       }
 
+      // Use documentId if available, fallback to id
+      const userId = user.documentId || String(user.id);
+
       const bookmarks = await strapi
         .plugin('magic-mark')
         .service('bookmarks')
-        .findAll(user.id);
+        .findAll(userId);
 
       ctx.body = {
         data: bookmarks,
@@ -22,6 +38,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Create a new bookmark
+   * POST /magic-mark/bookmarks
+   */
   async create(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -39,9 +59,10 @@ export default ({ strapi }: any) => ({
         return ctx.throw(400, 'Path is required');
       }
 
+      const userId = user.documentId || String(user.id);
       const service = strapi.plugin('magic-mark').service('bookmarks');
 
-      const bookmark = await service.create(name, path, query, emoji, description, user.id, sharedWithRoles, sharedWithUsers, isPublic);
+      const bookmark = await service.create(name, path, query, emoji, description, userId, sharedWithRoles, sharedWithUsers, isPublic);
 
       ctx.body = {
         data: bookmark
@@ -51,6 +72,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Update an existing bookmark
+   * PUT /magic-mark/bookmarks/:id
+   */
   async update(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -69,10 +94,12 @@ export default ({ strapi }: any) => ({
         return ctx.throw(400, 'Path is required');
       }
 
+      const userId = user.documentId || String(user.id);
+      
       const bookmark = await strapi
         .plugin('magic-mark')
         .service('bookmarks')
-        .update(id, { name, path, query, emoji, description, isPinned, order, sharedWithRoles, sharedWithUsers, isPublic }, user.id);
+        .update(id, { name, path, query, emoji, description, isPinned, order, sharedWithRoles, sharedWithUsers, isPublic }, userId);
 
       ctx.body = {
         data: bookmark
@@ -82,6 +109,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Delete a bookmark
+   * DELETE /magic-mark/bookmarks/:id
+   */
   async delete(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -104,6 +135,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Pin or unpin a bookmark
+   * PUT /magic-mark/bookmarks/:id/pin
+   */
   async pin(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -114,10 +149,12 @@ export default ({ strapi }: any) => ({
       const { id } = ctx.params;
       const { isPinned } = ctx.request.body;
 
+      const userId = user.documentId || String(user.id);
+
       const bookmark = await strapi
         .plugin('magic-mark')
         .service('bookmarks')
-        .pin(id, isPinned, user.id);
+        .pin(id, isPinned, userId);
 
       ctx.body = {
         data: bookmark
@@ -127,6 +164,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Reorder bookmarks
+   * PUT /magic-mark/bookmarks/reorder
+   */
   async reorder(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -141,10 +182,12 @@ export default ({ strapi }: any) => ({
         return ctx.throw(400, 'Bookmark IDs array is required');
       }
 
+      const userId = user.documentId || String(user.id);
+
       const bookmarks = await strapi
         .plugin('magic-mark')
         .service('bookmarks')
-        .reorder(bookmarkIds, user.id);
+        .reorder(bookmarkIds, userId);
 
       ctx.body = {
         data: bookmarks
@@ -154,6 +197,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Get all admin roles for sharing
+   * GET /magic-mark/roles
+   */
   async getRoles(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -161,25 +208,21 @@ export default ({ strapi }: any) => ({
         return ctx.throw(401, 'User not authenticated');
       }
 
-      // Get ALL admin roles including custom ones
-      const roles = await strapi.entityService.findMany(
-        'admin::role',
-        {
-          fields: ['id', 'name', 'code', 'description', 'createdAt', 'updatedAt'],
-          filters: {},
-          sort: { name: 'asc' },
-          populate: ['users'] // Also get user count for each role
-        }
-      );
+      // Get ALL admin roles using Document Service
+      const roles = await strapi.documents(ADMIN_ROLE_UID).findMany({
+        fields: ['name', 'code', 'description', 'createdAt', 'updatedAt'],
+        sort: { name: 'asc' },
+        populate: ['users']
+      });
 
       // Add user count to each role
-      const rolesWithDetails = roles?.map(role => ({
-        id: role.id,
+      const rolesWithDetails = roles?.map((role: any) => ({
+        id: role.documentId,
         name: role.name,
         code: role.code,
         description: role.description,
         userCount: role.users?.length || 0,
-        isCustom: !['super_admin', 'editor', 'author'].includes(role.code) // Mark custom roles
+        isCustom: !['super_admin', 'editor', 'author'].includes(role.code)
       })) || [];
 
       ctx.body = {
@@ -192,6 +235,10 @@ export default ({ strapi }: any) => ({
     }
   },
 
+  /**
+   * Get all admin users for sharing
+   * GET /magic-mark/users
+   */
   async getUsers(ctx: any) {
     try {
       const user = ctx.state.user;
@@ -199,11 +246,10 @@ export default ({ strapi }: any) => ({
         return ctx.throw(401, 'User not authenticated');
       }
 
-      // Use Strapi's admin user service to get all admin users
-      let users = [];
+      let users: any[] = [];
       
       try {
-        // Method 1: Try the admin service
+        // Method 1: Try the admin service first
         const adminUserService = strapi.admin?.services?.user || strapi.service('admin::user');
         if (adminUserService?.findPage) {
           const results = await adminUserService.findPage({
@@ -217,45 +263,45 @@ export default ({ strapi }: any) => ({
           users = await adminUserService.find();
         }
       } catch (err) {
-        console.log('[Magic-Mark] Admin service error, trying entity service:', err);
+        strapi.log.debug('[magic-mark] Admin service not available, trying Document Service');
       }
       
-      // Method 2: If admin service failed, use entity service
+      // Method 2: If admin service failed, use Document Service
       if (!users || users.length === 0) {
         try {
-          users = await strapi.entityService.findMany('admin::user', {
+          users = await strapi.documents(ADMIN_USER_UID).findMany({
             limit: 100
-          });
+          }) as any[];
         } catch (err) {
-          console.log('[Magic-Mark] Entity service error:', err);
+          strapi.log.debug('[magic-mark] Document Service error for admin::user');
         }
       }
       
-      // Method 3: Direct database query as last resort
+      // Method 3: entityService as fallback (deprecated but works)
       if (!users || users.length === 0) {
         try {
-          users = await strapi.db.query('admin::user').findMany({
+          users = await strapi.entityService.findMany(ADMIN_USER_UID, {
             limit: 100
           });
         } catch (err) {
-          console.log('[Magic-Mark] DB query error:', err);
+          strapi.log.warn('[magic-mark] entityService fallback also failed');
         }
       }
+
+      const currentUserId = user.documentId || String(user.id);
       
       // Filter out current user
-      const filteredUsers = users.filter(u => u.id !== user.id);
+      const filteredUsers = users.filter((u: any) => {
+        const uId = u.documentId || String(u.id);
+        return uId !== currentUserId;
+      });
 
-      console.log('[Magic-Mark] Total admin users found:', users.length);
-      console.log('[Magic-Mark] Filtered users (excluding current):', filteredUsers.map(u => ({
-        id: u.id,
-        name: `${u.firstname} ${u.lastname}`,
-        email: u.email
-      })));
+      strapi.log.debug(`[magic-mark] Total admin users found: ${users.length}`);
 
       ctx.body = {
         data: {
-          data: filteredUsers.map(u => ({
-            id: u.id,
+          data: filteredUsers.map((u: any) => ({
+            id: u.documentId || u.id,
             firstname: u.firstname || '',
             lastname: u.lastname || '',
             email: u.email,

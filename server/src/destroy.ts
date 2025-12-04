@@ -6,9 +6,9 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
     const licenseGuardService = strapi.plugin('magic-mark')?.service('license-guard');
     if (licenseGuardService) {
       licenseGuardService.cleanup();
-      strapi.log.info('✅ License Guard cleanup completed');
+      strapi.log.info('[SUCCESS] License Guard cleanup completed');
     }
   } catch (error) {
-    strapi.log.error('❌ Error during License Guard cleanup:', error);
+    strapi.log.error('[ERROR] Error during License Guard cleanup:', error);
   }
 };

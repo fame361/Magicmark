@@ -31,7 +31,7 @@ export default (config: any, { strapi }: any) => {
 
       // No license key - allow access but log warning
       if (!licenseKey) {
-        strapi.log.warn('⚠️ MagicMark: No license key found');
+        strapi.log.warn('[WARN] MagicMark: No license key found');
         return await next();
       }
 
@@ -39,7 +39,7 @@ export default (config: any, { strapi }: any) => {
       const verification = await licenseGuard.verifyLicense(licenseKey, true);
       
       if (!verification.valid && !verification.gracePeriod) {
-        strapi.log.warn('⚠️ MagicMark: Invalid license detected');
+        strapi.log.warn('[WARN] MagicMark: Invalid license detected');
       }
 
       return await next();
