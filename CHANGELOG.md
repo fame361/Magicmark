@@ -1,3 +1,33 @@
+# [3.0.0](https://github.com/Schero94/Magicmark/compare/v2.0.0...v3.0.0) (2025-12-04)
+
+
+### Features
+
+* migrate to Strapi v5 Document Service API ([816806c](https://github.com/Schero94/Magicmark/commit/816806c293033643515f29491b6329c0a606f5f8))
+
+
+### BREAKING CHANGES
+
+* Schema field changes
+- Renamed createdBy/updatedBy to creatorId/updaterId (string fields)
+- Removed relation dependency on admin::user
+
+Changes:
+- Migrated all services from entityService to strapi.documents()
+- Migrated controllers from db.query to strapi.documents()
+- Removed all emojis from server logs (replaced with [TAG] format)
+- Added proper JSDoc documentation to all functions
+- Fixed relation handling (now uses string documentIds)
+- Added entityService as documented fallback for admin::user
+- Updated content-types schema for Strapi v5 compliance
+
+Strapi v5 Rules Compliance:
+- strapi.db.query() = 0 (FORBIDDEN)
+- strapi.entityService = 1 (fallback only)
+- strapi.documents() = 9+ (RECOMMENDED)
+- Emojis in code = 0 (NONE)
+- JSDoc comments = 41 blocks
+
 # [2.0.0](https://github.com/Schero94/Magicmark/compare/v1.3.1...v2.0.0) (2025-11-01)
 
 
