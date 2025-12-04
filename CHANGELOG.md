@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/Schero94/Magicmark/compare/v3.0.0...v3.0.1) (2025-12-04)
+
+
+### Bug Fixes
+
+* **ci:** run build before verify in GitHub Actions ([707403e](https://github.com/Schero94/Magicmark/commit/707403e4de20ce5acc21bb4e4c98305063d2f209))
+
 # [3.0.0](https://github.com/Schero94/Magicmark/compare/v2.0.0...v3.0.0) (2025-12-04)
 
 
